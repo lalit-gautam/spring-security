@@ -12,5 +12,5 @@ http://localhost:8080/api/auth/signup (POST) is public URL where user can provid
 This is the Request json for /signup URL.
 After successfull signup 
 
-In order to  access the secured resources http://localhost:8080/api/secure/data(GET) 
+In order to  access the secured resources http://localhost:8080/api/secure/data (GET) 
 User can use the SignedUp user name and password by passing them in Authorization header.
