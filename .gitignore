@@ -15,3 +15,10 @@
 .idea/encodings.xml
 target/classes/com/security/config/SecurityConfig.class
 target/classes/com/security/controller/SecureController.class
+target/classes/com/security/controller/AuthController.class
+target/classes/com/security/repository/UserRepository.class
+target/classes/com/security/SpringSecurityApplication.class
+target/classes/com/security/service/UserService.class
+target/classes/com/security/service/CustomUserDetailsService.class
+target/classes/com/security/entity/User.class
+target/classes/com/security/dto/SignUpRequest.class
