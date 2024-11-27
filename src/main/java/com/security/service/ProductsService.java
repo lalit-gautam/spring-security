@@ -42,6 +42,14 @@ public class ProductsService {
         return productsRepository.findAll().stream().map(product -> convertToDTO(product)).toList();
     }
 
+    public ProductDTO getProductByProductName(String productName){
+        return convertToDTO(productsRepository.findByName(productName));
+    }
+
+    public List<ProductDTO> getProductsByCategory(String productName){
+        return productsRepository.findByCategory(productName).stream().map(this::convertToDTO).toList();
+    }
+
 
     public ProductDTO convertToDTO(Products products){
         return modelMapper.map(products, ProductDTO.class);
