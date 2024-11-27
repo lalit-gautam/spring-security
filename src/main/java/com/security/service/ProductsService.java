@@ -51,17 +51,4 @@ public class ProductsService {
         return modelMapper.map(productDTO, Products.class);
     }
 
-
-//    public Products convertToProduct(ProductDTO productDTO){
-//        return Products.builder()
-//                .name(productDTO.getName())
-//                .price(productDTO.getPrice())
-//                .quantity(productDTO.getQuantity())
-//                .dateReceived(productDTO.getDateReceived())
-//                .description(productDTO.getDescription())
-//                .category(productDTO.getCategory())
-//                .supplier(productDTO.getSupplier())
-//                .isActive(productDTO.isActive())
-//                .build();
-//    }
 }
