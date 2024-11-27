@@ -1,7 +1,7 @@
 package com.security.controller;
 
 import com.security.dto.SignUpRequest;
-import com.security.service.UserService;
+import com.security.service.UserSignUpService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserService userService;
+    private final UserSignUpService userSignUpService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    public AuthController(UserSignUpService userSignUpService) {
+        this.userSignUpService = userSignUpService;
     }
 
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestBody SignUpRequest request) {
-        userService.registerUser(request);
+        userSignUpService.registerUser(request);
         return ResponseEntity.ok("User registered successfully");
     }
 }
