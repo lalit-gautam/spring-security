@@ -19,7 +19,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/signup"))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/signup").permitAll()
-                        .requestMatchers("/api/secure/**").hasRole("ADMIN")
+                        .requestMatchers("/api/secure/users/**").hasAnyRole("USER", "ADMIN") // USER (and ADMIN) can access this path
+                        .requestMatchers("/api/secure/**").hasRole("ADMIN") // ADMIN can access any path under /api/secure
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
