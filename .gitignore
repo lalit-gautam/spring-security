@@ -13,3 +13,4 @@
 .idea/vcs.xml
 .idea/misc.xml
 .idea/encodings.xml
+target/classes/com/security/config/SecurityConfig.class
