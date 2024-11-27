@@ -3,6 +3,8 @@ package com.security.entity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,7 +12,8 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "shop_products")
 @Getter
-@Builder
+@Setter
+@NoArgsConstructor
 public class Products {
 
     @Id

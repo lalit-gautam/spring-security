@@ -35,6 +35,7 @@ public class ProductsController {
         return new ResponseEntity<>(productsService.addProduct(productDTO), HttpStatus.CREATED);
     }
 
+
     /** accessible by  admin */
     @GetMapping("/admin/info") // users, admin
     public ResponseEntity<String> userInformation() {

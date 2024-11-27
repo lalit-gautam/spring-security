@@ -31,7 +31,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/signup").permitAll()
                         .requestMatchers("/api/secure/users/**").hasAnyRole("USER", "ADMIN") // USER (and ADMIN) can access this path
                         .requestMatchers("/api/secure/admin/**").hasRole("ADMIN") // ADMIN can access any path under /api/secure
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .httpBasic(Customizer.withDefaults());
         return http.build();
