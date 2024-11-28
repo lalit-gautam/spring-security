@@ -3,6 +3,7 @@ package com.security.service;
 import com.security.dto.*;
 import com.security.entity.Products;
 import com.security.repository.ProductsRepository;
+import lombok.extern.log4j.Log4j2;
 import org.hibernate.query.Order;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Log4j2
 @Service
 public class ProductsService {
 
@@ -31,6 +33,9 @@ public class ProductsService {
                     .stream().map(Products::getName)
                     .toList() + " added successfully";
         }
+
+        log.error("Failed to add products. Product list is empty or an exception occurred in method: {} of class: {}",
+                                                Thread.currentThread().getStackTrace()[1].getMethodName(), this.getClass().getSimpleName());
         return "Some Exception occurred while adding List of Products";
     }
 
@@ -38,6 +43,9 @@ public class ProductsService {
         if(Objects.nonNull(productDTO)){
            return  productsRepository.save(convertToEntity(productDTO)).getName() + " Added successfully";
         }
+
+        log.error("Failed to add products. Product list is empty or an exception occurred in method: {} of class: {}",
+                Thread.currentThread().getStackTrace()[1].getMethodName(), this.getClass().getSimpleName());
         return "Some Exception occurred while adding Product";
     }
 
@@ -67,9 +75,9 @@ public class ProductsService {
 
             if(Objects.isNull(product)){
                 ordersNotAvailable.add(setProductNotAvailable(orderRequest.getProductName(), "The Requested Product is not Available"));
+                log.info("The Requested Product {} is not Available.", orderRequest.getProductName());
                 continue;
             }
-
                 if(product.getQuantity() >= orderRequest.getQuantity()){
                     product.setQuantity(product.getQuantity() - orderRequest.getQuantity());
                     BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(orderRequest.getQuantity()));
@@ -83,14 +91,13 @@ public class ProductsService {
                     totalItems += orderRequest.getQuantity();
                     overallTotalPrice = overallTotalPrice.add(totalPrice);
 
-
                 }else {
+                    log.info("The Requested Product {} Quantity {} Exceeds the available Quantity -> Quantity Available : {}",
+                                                                   orderRequest.getProductName(), orderRequest.getQuantity(), product.getQuantity());
                     ordersNotAvailable.add(setProductNotAvailable(orderRequest.getProductName(),
                                         "The Requested Quantity is not available in Stock : Available Quantity : " + product.getQuantity()));
                 }
-
         }
-
         return orderResponse(orderItems, ordersNotAvailable, totalItems, overallTotalPrice);
 
     }
