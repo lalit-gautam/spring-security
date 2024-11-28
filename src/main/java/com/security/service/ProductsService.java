@@ -3,6 +3,7 @@ package com.security.service;
 import com.security.dto.*;
 import com.security.entity.Products;
 import com.security.repository.ProductsRepository;
+import org.hibernate.query.Order;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,55 +53,74 @@ public class ProductsService {
         return productsRepository.findByCategory(productName).stream().map(this::convertToDTO).toList();
     }
 
+
+
     public OrderResponse processOrder(List<OrderRequest> orderRequests){
-        OrderResponse orderResponse = new OrderResponse();
-        List<OrderResponseItem> orderResponseItemList = new ArrayList<>();
+
+        List<OrderResponseItem> orderItems = new ArrayList<>();
+        List<OrderError> ordersNotAvailable = new ArrayList<>();
+        int totalItems = 0;
+        BigDecimal overallTotalPrice = BigDecimal.ZERO;
 
         for(OrderRequest orderRequest : orderRequests){
-
             Products product = productsRepository.findByName(orderRequest.getProductName());
-            if(Objects.nonNull(product)){
+
+            if(Objects.isNull(product)){
+                ordersNotAvailable.add(setProductNotAvailable(orderRequest.getProductName(), "The Requested Product is not Available"));
+                continue;
+            }
 
                 if(product.getQuantity() >= orderRequest.getQuantity()){
                     product.setQuantity(product.getQuantity() - orderRequest.getQuantity());
-                    BigDecimal orderRequestProductPrice = product.getPrice().multiply(BigDecimal.valueOf(orderRequest.getQuantity()));
+                    BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(orderRequest.getQuantity()));
 
-                    if(product.getQuantity() == 0){
+                    if(product.getQuantity() == 0){ // set product to inactive if quantity is 0
                         product.setActive(Boolean.FALSE);
                     }
                     productsRepository.save(product);
+                    orderItems.add(setOrderResponse(orderRequest, totalPrice));
 
-                    orderResponseItemList.add(OrderResponseItem.builder()
-                                    .orderName(orderRequest.getProductName())
-                                    .price(orderRequestProductPrice)
-                                    .quantityRequested(orderRequest.getQuantity())
-                                    .isAvailable(product.isActive())
-                                    .isOutOfStock(Boolean.FALSE)
-                            .build());
+                    totalItems += orderRequest.getQuantity();
+                    overallTotalPrice = overallTotalPrice.add(totalPrice);
+
+
                 }else {
-                    orderResponseItemList.add(OrderResponseItem.builder()
-                            .orderName(orderRequest.getProductName())
-                            .quantityRequested(orderRequest.getQuantity())
-                            .isAvailable(product.isActive())
-                            .isOutOfStock(Boolean.TRUE)
-                            .build());
+                    ordersNotAvailable.add(setProductNotAvailable(orderRequest.getProductName(),
+                                        "The Requested Quantity is not available in Stock : Available Quantity : " + product.getQuantity()));
                 }
-
-            }else {
-                orderResponseItemList.add(OrderResponseItem.builder()
-                        .orderName(orderRequest.getProductName())
-                        .quantityRequested(orderRequest.getQuantity())
-                        .isAvailable(Boolean.FALSE)
-                        .isOutOfStock(Boolean.TRUE)
-                        .build());
-            }
 
         }
 
-        orderResponse.setOrderResponseItems(orderResponseItemList);
-        return orderResponse;
+        return orderResponse(orderItems, ordersNotAvailable, totalItems, overallTotalPrice);
 
     }
+
+
+    public OrderError setProductNotAvailable(String productName, String message){
+        return OrderError.builder()
+                .productName(productName)
+                .message(message)
+                .build();
+    }
+
+    public OrderResponseItem setOrderResponse(OrderRequest orderRequest, BigDecimal price){
+        return OrderResponseItem.builder()
+                .productName(orderRequest.getProductName())
+                .quantity(orderRequest.getQuantity())
+                .totalPrice(price)
+                .build();
+    }
+
+    public OrderResponse orderResponse(List<OrderResponseItem> orderItems, List<OrderError> ordersNotAvailable, int totalItems, BigDecimal overallTotalPrice){
+        return OrderResponse.builder()
+                .items(orderItems)
+                .errors(ordersNotAvailable)
+                .totalItems(totalItems)
+                .overallTotalPrice(overallTotalPrice)
+                .build();
+
+    }
+
 
 
     public ProductDTO convertToDTO(Products products){

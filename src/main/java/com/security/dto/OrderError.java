@@ -3,12 +3,9 @@ package com.security.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Builder
-public class OrderResponseItem {
+public class OrderError {
     private String productName;
-    private int quantity;
-    private BigDecimal totalPrice;
+    private String message;
 }

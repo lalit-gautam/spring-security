@@ -1,15 +1,16 @@
 package com.security.dto;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Data
+@Getter
+@Builder
 public class OrderResponse {
-    List<OrderResponseItem> orderResponseItems;
+    private List<OrderResponseItem> items;
+    private List<OrderError> errors;
     private int totalItems;
-    private BigDecimal overallPrice;
+    private BigDecimal overallTotalPrice;
 }
