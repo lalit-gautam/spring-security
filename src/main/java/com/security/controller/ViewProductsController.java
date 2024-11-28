@@ -1,14 +1,13 @@
 package com.security.controller;
 
+import com.security.dto.OrderRequestList;
+import com.security.dto.OrderResponse;
 import com.security.dto.ProductDTO;
 import com.security.service.ProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,6 +37,11 @@ public class ViewProductsController {
     @GetMapping("/products/{category}")
     public ResponseEntity <List<ProductDTO>> getProductsByCategory(@PathVariable String category){
         return new ResponseEntity<>(productsService.getProductsByCategory(category), HttpStatus.OK);
+    }
+
+    @PostMapping("/products/purchase")
+    public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequestList orderRequestList) {
+        return new ResponseEntity<>(productsService.processOrder(orderRequestList.getOrders()), HttpStatus.OK);
     }
 
 }

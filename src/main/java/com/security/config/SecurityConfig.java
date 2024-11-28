@@ -24,7 +24,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/signup", "/api/secure/admin/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/signup", "/api/secure/admin/**", "api/telnet/products/purchase/**"))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/signup").permitAll()
                         .requestMatchers("/api/secure/users/**").hasAnyRole("USER", "ADMIN") // USER (and ADMIN) can access this path
